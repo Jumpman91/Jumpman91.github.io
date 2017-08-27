@@ -1,0 +1,811 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Algorithm," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Floyd-Warshell算法基本思想如果要让任意两点之间的距离变短，就要引入第三个点，通过第三个点中转，才可能缩短原来的距离，但经过哪个点呢？经过几个点？因为有时需要经过多个点才能找到最短路径。当任意两点之间不允许经过第三个点时，这些点之间的最短路径就是初始路程（边的权值）。但假如只允许经过1号顶点，求最短路径。只需要判断e[i][1]+e[1][j]是否比e[i][j]小即可，代码实现如下">
+<meta name="keywords" content="Algorithm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="最短路径算法">
+<meta property="og:url" content="http://yoursite.com/2017/08/27/最短路径算法/index.html">
+<meta property="og:site_name" content="矫捷's Note">
+<meta property="og:description" content="Floyd-Warshell算法基本思想如果要让任意两点之间的距离变短，就要引入第三个点，通过第三个点中转，才可能缩短原来的距离，但经过哪个点呢？经过几个点？因为有时需要经过多个点才能找到最短路径。当任意两点之间不允许经过第三个点时，这些点之间的最短路径就是初始路程（边的权值）。但假如只允许经过1号顶点，求最短路径。只需要判断e[i][1]+e[1][j]是否比e[i][j]小即可，代码实现如下">
+<meta property="og:image" content="http://i1.bvimg.com/524586/88e0a9c848f8a136.jpg">
+<meta property="og:updated_time" content="2017-08-27T12:41:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="最短路径算法">
+<meta name="twitter:description" content="Floyd-Warshell算法基本思想如果要让任意两点之间的距离变短，就要引入第三个点，通过第三个点中转，才可能缩短原来的距离，但经过哪个点呢？经过几个点？因为有时需要经过多个点才能找到最短路径。当任意两点之间不允许经过第三个点时，这些点之间的最短路径就是初始路程（边的权值）。但假如只允许经过1号顶点，求最短路径。只需要判断e[i][1]+e[1][j]是否比e[i][j]小即可，代码实现如下">
+<meta name="twitter:image" content="http://i1.bvimg.com/524586/88e0a9c848f8a136.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/08/27/最短路径算法/"/>
+
+
+
+
+
+  <title> 最短路径算法 | 矫捷's Note </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">矫捷's Note</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Quick notes</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/08/27/最短路径算法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="矫捷">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="矫捷's Note">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                最短路径算法
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-27T10:56:39+08:00">
+                2017-08-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>阅读数
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="http://i1.bvimg.com/524586/88e0a9c848f8a136.jpg" alt="image"></p>
+<h1 id="Floyd-Warshell算法"><a href="#Floyd-Warshell算法" class="headerlink" title="Floyd-Warshell算法"></a>Floyd-Warshell算法</h1><h2 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h2><p>如果要让任意两点之间的距离变短，就要引入第三个点，通过第三个点中转，才可能缩短原来的距离，但经过哪个点呢？经过几个点？因为有时需要经过多个点才能找到最短路径。<br>当任意两点之间不允许经过第三个点时，这些点之间的最短路径就是初始路程（边的权值）。但假如<strong>只允许经过1号顶点</strong>，求最短路径。只需要判断<code>e[i][1]+e[1][j]</code>是否比<code>e[i][j]</code>小即可，代码实现如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= n; i++)</div><div class="line">    <span class="keyword">for</span> (j = <span class="number">1</span>; j &lt;= n; j++)</div><div class="line">	<span class="keyword">if</span> (e[i][j] &gt; e[i][<span class="number">1</span>] + e[<span class="number">1</span>][j])</div><div class="line">	    e[i][j] = e[i][<span class="number">1</span>] + e[<span class="number">1</span>][j];</div></pre></td></tr></table></figure>
+<p>那所有顶点都可以中转的话，只需再加一层循环，这也就是Floyd的核心代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (k = <span class="number">1</span>; k &lt;= n; k++)</div><div class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= n; i++)</div><div class="line">		<span class="keyword">for</span> (j = <span class="number">1</span>; j &lt;= n; j++)</div><div class="line">			<span class="keyword">if</span> (e[i][j] &gt; e[i][k] + e[k][j])</div><div class="line">				e[i][j] = e[i][k] + e[k][j];</div></pre></td></tr></table></figure>
+<p>简单的说，就是开始只允许1号中转，之后允许1号和2号中转······允许经过1~n号作为中转，求任意两点的最短路径。即<strong>从i号顶点到j号顶点只经过前k号点的最短路程</strong>。也就是一种动态规划的思想。  </p>
+<h2 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</div><div class="line">	<span class="keyword">int</span> e[<span class="number">10</span>][<span class="number">10</span>], k, i, j, n, m, t1, t2, t3;</div><div class="line">	<span class="keyword">int</span> infinity = <span class="number">99999999</span>;</div><div class="line">	scanf_s(<span class="string">"%d %d"</span>, &amp;n, &amp;m);<span class="comment">//n表示顶点数，m表示边数</span></div><div class="line">	<span class="comment">//初始化</span></div><div class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= n; i++)&#123;</div><div class="line">		<span class="keyword">for</span> (j = <span class="number">1</span>; j &lt;= n; j++)&#123;</div><div class="line">			<span class="keyword">if</span> (i == j)</div><div class="line">				e[i][j] = <span class="number">0</span>;</div><div class="line">			<span class="keyword">else</span></div><div class="line">				e[i][j] = infinity;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//读入边</span></div><div class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= m; i++)&#123;</div><div class="line">		scanf_s(<span class="string">"%d %d %d"</span>, &amp;t1, &amp;t2, &amp;t3);<span class="comment">//顶点、顶点、距离</span></div><div class="line">		e[t1][t2] = t3;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//Floyd-Warshall核心语句</span></div><div class="line">	<span class="keyword">for</span> (k = <span class="number">1</span>; k &lt;= n; k++)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= n; i++)</div><div class="line">		&#123;</div><div class="line">			<span class="keyword">for</span> (j = <span class="number">1</span>; j &lt;= n; j++)</div><div class="line">			&#123;</div><div class="line">				<span class="keyword">if</span> (e[i][j] &gt; e[i][k] + e[k][j])</div><div class="line">					e[i][j] = e[i][k] + e[k][j];</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= n; i++)&#123;</div><div class="line">		<span class="keyword">for</span> (j = <span class="number">1</span>; j &lt;= n; j++)&#123;</div><div class="line">			<span class="built_in">printf</span>(<span class="string">"%10d"</span>, e[i][j]);</div><div class="line">		&#125;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"\n"</span>);</div><div class="line"></div><div class="line">	&#125;</div><div class="line">	getchar();</div><div class="line">	getchar();</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">4 8</div><div class="line">1 2 2</div><div class="line">1 3 6</div><div class="line">1 4 4</div><div class="line">2 3 3</div><div class="line">3 1 7</div><div class="line">3 4 1</div><div class="line">4 1 5</div><div class="line">4 3 12</div></pre></td></tr></table></figure></p>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">0  2  5  4 </div><div class="line">9  0  3  4 </div><div class="line">6  8  0  1</div><div class="line">5  7  10 0</div></pre></td></tr></table></figure>
+<p>这种算法可以求出任意两点之间的最短路径。它的时间复杂度是<strong>O(N^3)</strong>,时效性比较差，但实现它只需要五行代码，所以如果对时间复杂度要求不高，可以选择这种方法。另外，Floyd算法中可以有负权边，但不能有负权回路，因为有负权回路就没有最短路径。<br>PS：Floyd本来读的是文学，后来美国经济不景气，找不到工作，去一个电气公司，在机房值夜班，从这开始了他的计算机生涯……另外，他还发明了堆排序。Orz</p>
+<h1 id="Dijkstra算法"><a href="#Dijkstra算法" class="headerlink" title="Dijkstra算法"></a>Dijkstra算法</h1><p>首先，Dijkstra算法是单源最短路径算法，用于计算一个顶点到其他所有节点的最短路径。</p>
+<h2 id="基本思想-1"><a href="#基本思想-1" class="headerlink" title="基本思想"></a>基本思想</h2><p>以起始点为中心向外层层扩展，直到终点为止。  </p>
+<ul>
+<li>将所有顶点分为两部分，已知最短路程的顶点集合P和未知最短路径的集合Q。用<code>book[]</code>数组记录哪些点在P中。起初P中的顶点只有起始点s。</li>
+<li>用<code>dis[]</code>数组存储起始点s到其余各点的距离，初始化<code>dis[s]=0</code>，若存在起始点直接到达的顶点k，则<code>dis[i]=e[s][k]</code>。不能直接到达的顶点j<code>dis[j]</code>设为无穷。</li>
+<li>在集合Q中选择一个离起始点s最近的点u，即<code>dis[u]</code>最小，加入集合P。之后遍历所有以u为起点的边，并进行<strong>松弛</strong>。ex：有一条u到v的边，可以通过u-&gt;v拓展一条s-&gt;v的路径，若<code>dis[u]+e[u][v]&lt;dis[v]</code>，就可以更新<code>dis[v]</code>。</li>
+<li>重复以上操作，直到集合Q为空。  <h2 id="完整代码-1"><a href="#完整代码-1" class="headerlink" title="完整代码"></a>完整代码</h2></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</div><div class="line">	<span class="keyword">int</span> e[<span class="number">10</span>][<span class="number">10</span>], dis[<span class="number">10</span>], book[<span class="number">10</span>], i, j, n, m, t1, t2, t3, u, v, min,start; </div><div class="line">	<span class="keyword">int</span> infinity = <span class="number">99999999</span>;</div><div class="line">	scanf_s(<span class="string">"%d %d %d"</span>, &amp;n, &amp;m, &amp;start);<span class="comment">//n表示顶点数，m表示边数,start表示起点</span></div><div class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= n; i++)&#123;</div><div class="line">		<span class="keyword">for</span> (j = <span class="number">1</span>; j &lt;= n; j++)&#123;</div><div class="line">			<span class="keyword">if</span> (i == j)</div><div class="line">				e[i][j] = <span class="number">0</span>;</div><div class="line">			<span class="keyword">else</span></div><div class="line">				e[i][j] = infinity;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= m; i++)&#123;</div><div class="line">		scanf_s(<span class="string">"%d %d %d"</span>, &amp;t1, &amp;t2, &amp;t3);</div><div class="line">		e[t1][t2] = t3;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//初始化dis数组，即start到其余各顶点的初始路程</span></div><div class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= n; i++)&#123;</div><div class="line">		dis[i] = e[start][i];</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//初始化book数组</span></div><div class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= n; i++)&#123;</div><div class="line">		book[i] = <span class="number">0</span>;</div><div class="line">	&#125;</div><div class="line">	book[<span class="number">1</span>] = <span class="number">1</span>;</div><div class="line">	<span class="comment">//Dijkstra核心语句</span></div><div class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= n; i++)</div><div class="line">	&#123;</div><div class="line">		min = infinity;</div><div class="line">		<span class="comment">//找到离start最近的顶点</span></div><div class="line">		<span class="keyword">for</span> (j = <span class="number">1</span>; j &lt;= n; j++)</div><div class="line">		&#123;</div><div class="line">			<span class="keyword">if</span> (book[j] == <span class="number">0</span> &amp;&amp; dis[j] &lt; min)</div><div class="line">			&#123;</div><div class="line">				min = dis[j];</div><div class="line">				u = j;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		book[u] = <span class="number">1</span>;</div><div class="line">		<span class="comment">//"松弛"的过程</span></div><div class="line">		<span class="keyword">for</span> (v = <span class="number">1</span>; v &lt;= n; v++)</div><div class="line">		&#123;</div><div class="line">			<span class="keyword">if</span> (e[u][v] &lt; infinity)</div><div class="line">			&#123;</div><div class="line">				<span class="keyword">if</span> (dis[v] &gt; dis[u] + e[u][v])</div><div class="line">				&#123;</div><div class="line">					dis[v] = dis[u] + e[u][v];</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= n; i++)&#123;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"顶点%d到顶点%d的最短距离：%d\n"</span>, start,i,dis[i]);</div><div class="line">	&#125;</div><div class="line">	getchar();</div><div class="line">	getchar();</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div></pre></td></tr></table></figure>
+<p>输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">6 9 1</div><div class="line">1 2 1</div><div class="line">1 3 12</div><div class="line">2 3 9</div><div class="line">2 4 3</div><div class="line">3 5 5</div><div class="line">4 3 4</div><div class="line">4 5 13</div><div class="line">4 6 15</div><div class="line">5 6 4</div></pre></td></tr></table></figure>
+<p>输出：<code>0 1 8 4 13 17</code></p>
+<p>Dijkstra算法的时间复杂度是<code>O(N^2)</code>，比Floyd快了不少，其中每次找到离起始点最近的顶点的时间复杂度是<code>O(N)</code>，如果用堆来优化，可以将这部分的时间复杂度降为<code>O(logN)</code>。Dijkstra算法是是一种基于贪心策略的算法，每一次拓展一个路程最短的点，更新与其相邻点的距离。但如果图中含有负权边，已经确定最短路程的点有可能会随着拓展而改变，就破坏了Dijkstra算法的规则，所以它不能用于解决带有负权边的图。</p>
+<h1 id="Bellman-Ford算法"><a href="#Bellman-Ford算法" class="headerlink" title="Bellman-Ford算法"></a>Bellman-Ford算法</h1><p>Bellman算法也是单源最短路径算法，但与Dijkstra算法不同，它可以处理含有负权边的图，还可以判断有无负权回路。</p>
+<h2 id="基本思想-2"><a href="#基本思想-2" class="headerlink" title="基本思想"></a>基本思想</h2><p>和Dijkstra算法一样，需要<code>dis[]</code>数组存储起始点到各点的距离并进行松弛，u、v和w三个数组记录边的两个顶点和权值。对读入的每一条边都进行松弛：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">for(i=1;i&lt;=m;i++)</div><div class="line">    if(dis[v[i]]&gt;dis[u[i]]+w[i])</div><div class="line">        dis[v[i]]=dis[u[i]]+w[i];</div></pre></td></tr></table></figure>
+<p>松弛一遍肯定是不够的，那问题是需要松弛几遍？n-1遍。因为任意两点的最短路径最多包含n-1条边。但实际上n-1是最大次数，我们可以加入一个变量<code>check</code>来检测松弛后<code>dis[]</code>是否变化，若不变，就可以结束。<br>关于如何判断是否含有负权回路，就是在松弛完成后还能进行松弛，那就肯定有负权回路。</p>
+<h2 id="完整代码-2"><a href="#完整代码-2" class="headerlink" title="完整代码"></a>完整代码</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</div><div class="line">	<span class="keyword">int</span> dis[<span class="number">10</span>], i, k, n, m, u[<span class="number">10</span>], v[<span class="number">10</span>], w[<span class="number">10</span>];</div><div class="line">	<span class="comment">//check标记松弛后dis是否被变化，flag检测是否含有负权回路</span></div><div class="line">	<span class="keyword">int</span> check, flag;</div><div class="line">	<span class="keyword">int</span> infinity = <span class="number">999999999</span>;</div><div class="line">	scanf_s(<span class="string">"%d %d"</span>, &amp;n, &amp;m);<span class="comment">//n是顶点个数。m是边数</span></div><div class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= m; i++)&#123;</div><div class="line">		scanf_s(<span class="string">"%d %d %d"</span>, &amp;u[i], &amp;v[i], &amp;w[i]);</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= n; i++)&#123;</div><div class="line">		dis[i] = infinity;</div><div class="line">	&#125;</div><div class="line">	dis[<span class="number">1</span>] = <span class="number">0</span>;</div><div class="line">	<span class="comment">//核心语句</span></div><div class="line">	<span class="keyword">for</span> (k = <span class="number">1</span>; k &lt;= n - <span class="number">1</span>; k++)&#123;</div><div class="line">		check = <span class="number">0</span>;</div><div class="line">		<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= m; i++)&#123;</div><div class="line">			<span class="keyword">if</span> (dis[v[i]] &gt; dis[u[i]] + w[i])</div><div class="line">			&#123;</div><div class="line">				dis[v[i]] = dis[u[i]] + w[i];</div><div class="line">				check = <span class="number">1</span>;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="comment">//检测松弛后dis是否更新</span></div><div class="line">		<span class="keyword">if</span> (check == <span class="number">0</span>)</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">	&#125;</div><div class="line">	flag = <span class="number">0</span>;</div><div class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= m; i++)&#123;</div><div class="line">		<span class="comment">//n-1轮松弛后还能继续松弛</span></div><div class="line">		<span class="keyword">if</span> (dis[v[i]] &gt; dis[u[i]] + w[i])</div><div class="line">			flag = <span class="number">1</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> (flag == <span class="number">1</span>)</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"含有负权回路"</span>);</div><div class="line">	<span class="keyword">else</span>&#123;</div><div class="line">		<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= n; i++)&#123;</div><div class="line">			<span class="built_in">printf</span>(<span class="string">"%d "</span>, dis[i]);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	getchar();</div><div class="line">	getchar();</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">5 5</div><div class="line">2 3 2</div><div class="line">1 2 -3</div><div class="line">1 5 5 </div><div class="line">4 5 2</div><div class="line">3 4 3</div></pre></td></tr></table></figure>
+<p>输出：<code>0 -3 -1 2 4</code><br>Bellman-Ford算法的时间复杂度为<code>O(NM)</code>其实该算法还有另一种优化方式：每进行一次松弛后，会有一些顶点已经得出最短路径，不再影响之后的松弛，但每次还要判断是否需要松弛，这就浪费了时间。所以，我们可以<strong>每次仅对最短路估计值发生改变了的顶点的所有边进行松弛</strong>，也就是Bellman-Ford的队列优化。</p>
+<h1 id="Bellman-Ford的队列优化（SPFA）"><a href="#Bellman-Ford的队列优化（SPFA）" class="headerlink" title="Bellman-Ford的队列优化（SPFA）"></a>Bellman-Ford的队列优化（SPFA）</h1><p>最核心的思想就是用一个队列来存放被成功松弛的点，之后只对队列中的点进行松弛。  </p>
+<h2 id="完整代码："><a href="#完整代码：" class="headerlink" title="完整代码："></a>完整代码：</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</div><div class="line">	<span class="keyword">int</span> n, m, i, k;</div><div class="line">	<span class="keyword">int</span> u[<span class="number">8</span>], v[<span class="number">8</span>], w[<span class="number">8</span>];</div><div class="line">	<span class="keyword">int</span> first[<span class="number">6</span>], next[<span class="number">8</span>];</div><div class="line">	<span class="keyword">int</span> dis[<span class="number">6</span>] = &#123; <span class="number">0</span> &#125;, book[<span class="number">6</span>] = &#123; <span class="number">0</span> &#125;;<span class="comment">//book记录哪些顶点已在队列中</span></div><div class="line">	<span class="keyword">int</span> que[<span class="number">101</span>] = &#123; <span class="number">0</span> &#125;, head = <span class="number">1</span>, tail = <span class="number">1</span>;</div><div class="line">	<span class="keyword">int</span> inf = <span class="number">999999999</span>;</div><div class="line">	scanf_s(<span class="string">"%d %d"</span>, &amp;n, &amp;m);</div><div class="line">	<span class="comment">//初始化</span></div><div class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= n; i++)&#123;</div><div class="line">		dis[i] = inf;</div><div class="line">		book[i] = <span class="number">0</span>;</div><div class="line">		first[i] = <span class="number">-1</span>;</div><div class="line">	&#125;</div><div class="line">	dis[<span class="number">1</span>] = <span class="number">0</span>;</div><div class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= m; i++)&#123;</div><div class="line">		scanf_s(<span class="string">"%d %d %d"</span>, &amp;u[i], &amp;v[i], &amp;w[i]);</div><div class="line">		<span class="comment">//建立邻接表</span></div><div class="line">		next[i] = first[u[i]];</div><div class="line">		first[u[i]] = i;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//顶点1入队</span></div><div class="line">	que[tail] = <span class="number">1</span>;</div><div class="line">	tail++;</div><div class="line">	book[<span class="number">1</span>] = <span class="number">1</span>;</div><div class="line">	<span class="keyword">while</span> (head &lt; tail)</div><div class="line">	&#123;</div><div class="line">		k = first[que[head]];<span class="comment">//当前处理的队首顶点</span></div><div class="line">		<span class="keyword">while</span> (k != <span class="number">-1</span>)&#123;</div><div class="line">			<span class="comment">//是否可以松弛</span></div><div class="line">			<span class="keyword">if</span> (dis[v[k]] &gt; dis[u[k]] + w[k])&#123;</div><div class="line">				dis[v[k]] = dis[u[k]] + w[k];</div><div class="line">				<span class="keyword">if</span> (book[v[k]] == <span class="number">0</span>)&#123;</div><div class="line">					<span class="comment">//入队</span></div><div class="line">					que[tail] = v[k];</div><div class="line">					tail++;</div><div class="line">					book[v[k]] = <span class="number">1</span>;</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			k = next[k];<span class="comment">//下一条边</span></div><div class="line">		&#125;</div><div class="line">		<span class="comment">//出队</span></div><div class="line">		book[que[head]] = <span class="number">0</span>;</div><div class="line">		head++;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= n; i++)&#123;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"%d "</span>, dis[i]);</div><div class="line">	&#125;</div><div class="line">	getchar();</div><div class="line">	getchar();</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>对于SPFA算法，如果某个点入队的次数超过n次，那这个图肯定存在负权回路。<br>与Dijkstra算法与Bellman-ford算法都不同，SPFA的算法时间效率是不稳定的，即它对于不同的图所需要的时间有很大的差别。SPFA算法在负边权图上可以完全取代Bellman-ford算法，另外在稀疏图中也表现良好。<br>PS：这里代码使用邻接表来存储图可以进一步的优化时间复杂度。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">Floyd</th>
+<th style="text-align:center">Dijkstra</th>
+<th style="text-align:center">Bellman-Ford</th>
+<th style="text-align:center">队列优化的Bellman-Ford</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">空间复杂度</td>
+<td style="text-align:center">O(N^2)</td>
+<td style="text-align:center">O(M)</td>
+<td style="text-align:center">O(M)</td>
+<td style="text-align:center">O(M)</td>
+</tr>
+<tr>
+<td style="text-align:center">时间复杂度</td>
+<td style="text-align:center">O(N^3)</td>
+<td style="text-align:center">O((M+N)logN)</td>
+<td style="text-align:center">O(NM)</td>
+<td style="text-align:center">最坏O(NM)</td>
+</tr>
+<tr>
+<td style="text-align:center">适用情况</td>
+<td style="text-align:center">稠密图</td>
+<td style="text-align:center">稠密图</td>
+<td style="text-align:center">稀疏图</td>
+<td style="text-align:center">稀疏图</td>
+</tr>
+<tr>
+<td style="text-align:center">负权</td>
+<td style="text-align:center">支持</td>
+<td style="text-align:center">不支持</td>
+<td style="text-align:center">支持</td>
+<td style="text-align:center">支持</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Floyd编码少，可求出所有点间的最短路径，但时间复杂度高，在数据较少时可以使用。</li>
+<li>Dijkstra时间复杂度比较低，堆优化后可达到<code>O(MlogN)</code>，但无法解决含有负权的图。</li>
+<li>对于含有负权的图，需要使用Bellman-Ford算法。但是在非负边权图中，为了避免最坏情况的出现，通常使用效率更加稳定的Dijkstra算法，以及它的使用堆优化的版本。  </li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Algorithm/" rel="tag"># Algorithm</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/09/DFS与BFS/" rel="prev" title="DFS与BFS">
+                DFS与BFS <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="矫捷" />
+          <p class="site-author-name" itemprop="name">矫捷</p>
+           
+              <p class="site-description motion-element" itemprop="description">1085825257@qq.com</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://github.com/Jumpman91" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/2251975695" target="_blank" title="新浪微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  新浪微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-block">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.wangluyuan.me" title="blog.wangluyuan.me" target="_blank">blog.wangluyuan.me</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Floyd-Warshell算法"><span class="nav-number">1.</span> <span class="nav-text">Floyd-Warshell算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本思想"><span class="nav-number">1.1.</span> <span class="nav-text">基本思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#完整代码"><span class="nav-number">1.2.</span> <span class="nav-text">完整代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Dijkstra算法"><span class="nav-number">2.</span> <span class="nav-text">Dijkstra算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本思想-1"><span class="nav-number">2.1.</span> <span class="nav-text">基本思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#完整代码-1"><span class="nav-number">2.2.</span> <span class="nav-text">完整代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Bellman-Ford算法"><span class="nav-number">3.</span> <span class="nav-text">Bellman-Ford算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本思想-2"><span class="nav-number">3.1.</span> <span class="nav-text">基本思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#完整代码-2"><span class="nav-number">3.2.</span> <span class="nav-text">完整代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Bellman-Ford的队列优化（SPFA）"><span class="nav-number">4.</span> <span class="nav-text">Bellman-Ford的队列优化（SPFA）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#完整代码："><span class="nav-number">4.1.</span> <span class="nav-text">完整代码：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">矫捷</span>
+</div>
+
+
+<!--div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+-->
+
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i>访问人数<span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
